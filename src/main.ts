@@ -1,9 +1,9 @@
 import {writeFileSync} from 'fs';
 import * as core from '@actions/core';
-import sheet from './sheet';
+// import sheet from './sheet';
 
 process.on('unhandledRejection', handleError);
-main().catch(handleError);
+// main().catch(handleError);
 
 async function main(): Promise<void> {
   try {
@@ -24,3 +24,5 @@ function handleError(err: any): void {
   /* eslint-enable no-console */
   core.setFailed(`Unhandled error: ${err}`);
 }
+
+core.setOutput('result', '{}');
