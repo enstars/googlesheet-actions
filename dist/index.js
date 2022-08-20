@@ -1262,7 +1262,8 @@ function main() {
             core.info(sheetID);
             const data = yield sheet_1.default(sheetID);
             core.info(`${data === null || data === void 0 ? void 0 : data.length} entries`);
-            fs_1.writeFileSync(path, JSON.stringify(data, null, 2));
+            fs_1.writeFileSync(path.replace('.json', '.max.json'), JSON.stringify(data, undefined, 2));
+            fs_1.writeFileSync(path, JSON.stringify(data));
             core.setOutput('result', JSON.stringify(data, null, 2));
         }
         catch (error) {

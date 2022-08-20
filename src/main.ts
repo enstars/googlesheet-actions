@@ -12,7 +12,11 @@ async function main(): Promise<void> {
     core.info(sheetID);
     const data = await sheet(sheetID);
     core.info(`${data?.length} entries`);
-    writeFileSync(path, JSON.stringify(data, null, 2));
+    writeFileSync(
+      path.replace('.json', '.max.json'),
+      JSON.stringify(data, undefined, 2)
+    );
+    writeFileSync(path, JSON.stringify(data));
     core.setOutput('result', JSON.stringify(data, null, 2));
   } catch (error) {
     core.setFailed(error.message);
