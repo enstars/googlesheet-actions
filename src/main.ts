@@ -11,6 +11,7 @@ async function main(): Promise<void> {
     const path = core.getInput('path');
     core.info(sheetID);
     const data = await sheet(sheetID);
+    core.info(`${data?.length}`);
     writeFileSync(path, data, 'utf-8');
     core.setOutput('result', JSON.stringify(data, null, 2));
   } catch (error) {
