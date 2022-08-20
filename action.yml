@@ -5,6 +5,9 @@ inputs:
   sheet-id:
     description: 'google sheet id'
     required: true
+  path:
+    description: 'path to save json to'
+    required: true
 runs:
   using: 'node12'
   main: 'dist/index.js'
