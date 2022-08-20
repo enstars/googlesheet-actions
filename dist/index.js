@@ -4494,16 +4494,18 @@ function sheet(sheetId = '') {
                         const data = dataRow[i];
                         // only make the field actually null if data is __null;
                         // else, just remove the field entirely to reduce json size
-                        if (data === '__null') {
-                            obj[h] = null;
-                        }
-                        else if (data !== 'null') {
-                            try {
-                                obj[h] = JSON.parse(dataRow[i]);
+                        if (h !== '__skipColumn') {
+                            if (data === '__null') {
+                                obj[h] = null;
                             }
-                            catch (_a) {
-                                // strings are just put in directly
-                                obj[h] = dataRow[i];
+                            else if (data !== 'null') {
+                                try {
+                                    obj[h] = JSON.parse(dataRow[i]);
+                                }
+                                catch (_a) {
+                                    // strings are just put in directly
+                                    obj[h] = dataRow[i];
+                                }
                             }
                         }
                     });
