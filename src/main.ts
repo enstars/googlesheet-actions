@@ -9,7 +9,8 @@ async function main(): Promise<void> {
   try {
     const sheetID = core.getInput('sheet-id');
     core.info(sheetID);
-    const data = await sheet(sheetID);
+    // const data = await sheet(sheetID);
+    const data = {};
     writeFileSync(`${process.env.HOME}/data.json`, data, 'utf-8');
     core.setOutput('result', JSON.stringify(data, null, 2));
   } catch (error) {
