@@ -49,7 +49,6 @@ export default async function sheet<T>(sheetId = ''): Promise<T[] | []> {
       // console.log('res', sheetUnflattened);
       return sheetUnflattened;
     } catch (error) {
-      // throw error;
-      return {status: 'error', error};
+      throw error;
     }
 }
