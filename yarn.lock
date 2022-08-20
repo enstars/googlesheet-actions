@@ -2284,6 +2284,11 @@
     "rimraf" "2.6.3"
     "write" "1.0.3"
 
+"flat@^5.0.2":
+  "integrity" "sha512-b6suED+5/3rTpUBdG1gupIl8MPFCAMA0QXwmljLhvCUKcUvdE4gWky9zpuGCcXHOsz4J9wPGNWq6OKpmIzz3hQ=="
+  "resolved" "https://registry.npmjs.org/flat/-/flat-5.0.2.tgz"
+  "version" "5.0.2"
+
 "flatted@^2.0.0":
   "integrity" "sha512-r5wGx7YeOwNWNlCA0wQ86zKyDLMQr+/RB8xy74M4hTphfmjlijTSSXGuH8rnvKZnfT9i+75zmd8jcKdMR4O6jA=="
   "resolved" "https://registry.npmjs.org/flatted/-/flatted-2.0.2.tgz"
