@@ -1264,6 +1264,8 @@ function main() {
             core.info(sheetID);
             const data = yield sheet_1.default(sheetID);
             core.info(`${data === null || data === void 0 ? void 0 : data.length} entries`);
+            core.info(core.getInput('repo'));
+            core.info(repo);
             data
                 .filter((s) => {
                 s.name.startsWith(repo);

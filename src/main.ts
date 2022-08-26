@@ -14,6 +14,9 @@ async function main(): Promise<void> {
     core.info(sheetID);
     const data = await sheet(sheetID);
     core.info(`${data?.length} entries`);
+    core.info(core.getInput('repo'));
+    core.info(repo);
+
     data
       .filter((s: any) => {
         s.name.startsWith(repo);
