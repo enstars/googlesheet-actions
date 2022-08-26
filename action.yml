@@ -5,8 +5,8 @@ inputs:
   sheet-id:
     description: 'google sheet id'
     required: true
-  path:
-    description: 'path to save json to'
+  repo:
+    description: 'name of repo for filtering sheets'
     required: true
 runs:
   using: 'node12'

@@ -1270,6 +1270,7 @@ function main() {
             })
                 .forEach((s) => {
                 const sheetPath = s.name.replace(`${repo}/`, '');
+                core.info(sheetPath);
                 fs_1.writeFileSync(sheetPath.replace('.json', '.max.json'), JSON.stringify(s.data, undefined, 2));
                 fs_1.writeFileSync(sheetPath, JSON.stringify(s.data));
             });

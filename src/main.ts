@@ -20,6 +20,8 @@ async function main(): Promise<void> {
       })
       .forEach((s: any) => {
         const sheetPath = s.name.replace(`${repo}/`, '');
+        core.info(sheetPath);
+
         writeFileSync(
           sheetPath.replace('.json', '.max.json'),
           JSON.stringify(s.data, undefined, 2)
