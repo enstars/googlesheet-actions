@@ -1267,9 +1267,7 @@ function main() {
             core.info(core.getInput('repo'));
             core.info(repo);
             data
-                .filter((s) => {
-                s.name.startsWith(repo);
-            })
+                .filter((s) => s.name.startsWith(repo))
                 .forEach((s) => {
                 const sheetPath = s.name.replace(`${repo}/`, '');
                 core.info(sheetPath);

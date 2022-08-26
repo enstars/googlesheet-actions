@@ -18,9 +18,7 @@ async function main(): Promise<void> {
     core.info(repo);
 
     data
-      .filter((s: any) => {
-        s.name.startsWith(repo);
-      })
+      .filter((s: any) => s.name.startsWith(repo))
       .forEach((s: any) => {
         const sheetPath = s.name.replace(`${repo}/`, '');
         core.info(sheetPath);
