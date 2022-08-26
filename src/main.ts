@@ -9,22 +9,22 @@ main().catch(handleError);
 async function main(): Promise<void> {
   try {
     const sheetID = core.getInput('sheet-id');
-    const repo = core.getInput('repo');
-    const path = core.getInput('path');
+    const repo = core.getInput('repo').split('/')[1];
+    // const path = core.getInput('path');
     core.info(sheetID);
     const data = await sheet(sheetID);
     core.info(`${data?.length} entries`);
     data
-      .filter(s => {
+      .filter((s: any) => {
         s.name.startsWith(repo);
       })
-      .forEach(sheet => {
-        const sheetPath = sheet.name.replace(`${repo}/`, '');
+      .forEach((s: any) => {
+        const sheetPath = s.name.replace(`${repo}/`, '');
         writeFileSync(
           sheetPath.replace('.json', '.max.json'),
-          JSON.stringify(sheet.data, undefined, 2)
+          JSON.stringify(s.data, undefined, 2)
         );
-        writeFileSync(sheetPath, JSON.stringify(sheet.data));
+        writeFileSync(sheetPath, JSON.stringify(s.data));
       });
     core.setOutput('result', JSON.stringify(data, null, 2));
   } catch (error) {

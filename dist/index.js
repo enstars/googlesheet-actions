@@ -1249,6 +1249,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable github/array-foreach */
 const fs_1 = __webpack_require__(747);
 const core = __importStar(__webpack_require__(470));
 const sheet_1 = __importDefault(__webpack_require__(804));
@@ -1258,12 +1259,20 @@ function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const sheetID = core.getInput('sheet-id');
-            const path = core.getInput('path');
+            const repo = core.getInput('repo').split('/')[1];
+            // const path = core.getInput('path');
             core.info(sheetID);
             const data = yield sheet_1.default(sheetID);
             core.info(`${data === null || data === void 0 ? void 0 : data.length} entries`);
-            fs_1.writeFileSync(path.replace('.json', '.max.json'), JSON.stringify(data, undefined, 2));
-            fs_1.writeFileSync(path, JSON.stringify(data));
+            data
+                .filter((s) => {
+                s.name.startsWith(repo);
+            })
+                .forEach((s) => {
+                const sheetPath = s.name.replace(`${repo}/`, '');
+                fs_1.writeFileSync(sheetPath.replace('.json', '.max.json'), JSON.stringify(s.data, undefined, 2));
+                fs_1.writeFileSync(sheetPath, JSON.stringify(s.data));
+            });
             core.setOutput('result', JSON.stringify(data, null, 2));
         }
         catch (error) {
@@ -4485,35 +4494,38 @@ function sheet(sheetId = '') {
         else
             try {
                 const resultsJson = yield (yield axios_1.default.get(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}?includeGridData=true&key=AIzaSyACADWLTjCH0zpxiXCOLgMJJh3CxflBac4`)).data;
-                const sheetData = resultsJson.sheets[0].data[0].rowData.slice(resultsJson.sheets[0].properties.gridProperties.frozenRowCount - 1);
-                const header = sheetData[0].values.map(v => v.userEnteredValue.stringValue);
-                const sheetUnflattened = sheetData.slice(1).map(row => {
-                    const dataRow = row.values.map(v => v.userEnteredValue.stringValue);
-                    const obj = {};
-                    header.forEach((h, i) => {
-                        const data = dataRow[i];
-                        // only make the field actually null if data is __null;
-                        // else, just remove the field entirely to reduce json size
-                        if (h !== '__skipColumn') {
-                            if (data === '__null') {
-                                obj[h] = null;
-                            }
-                            else if (data !== 'null') {
-                                try {
-                                    obj[h] = JSON.parse(dataRow[i]);
+                return resultsJson.sheets.map(sheet => {
+                    const sheetName = sheet.properties.title;
+                    const sheetData = sheet.data[0].rowData.slice(sheet.properties.gridProperties.frozenRowCount - 1);
+                    const header = sheetData[0].values.map(v => v === null || v === void 0 ? void 0 : v.formattedValue);
+                    const sheetUnflattened = sheetData.slice(1).map(row => {
+                        const dataRow = row.values.map(v => v === null || v === void 0 ? void 0 : v.formattedValue);
+                        const obj = {};
+                        header.forEach((h, i) => {
+                            const data = dataRow[i];
+                            // only make the field actually null if data is __null;
+                            // else, just remove the field entirely to reduce json size
+                            if (h !== '__skipColumn' && typeof dataRow !== 'undefined') {
+                                if (data === '__null') {
+                                    obj[h] = null;
                                 }
-                                catch (_a) {
-                                    // strings are just put in directly
-                                    obj[h] = dataRow[i];
+                                else if (data !== 'null') {
+                                    try {
+                                        obj[h] = JSON.parse(dataRow[i]);
+                                    }
+                                    catch (_a) {
+                                        // strings are just put in directly
+                                        obj[h] = dataRow[i];
+                                    }
                                 }
                             }
-                        }
+                        });
+                        return unflatten(obj);
                     });
-                    return unflatten(obj);
+                    // console.log(header);
+                    // console.log('res', sheetUnflattened);
+                    return { data: sheetUnflattened, name: sheetName };
                 });
-                // console.log(header);
-                // console.log('res', sheetUnflattened);
-                return sheetUnflattened;
             }
             catch (error) {
                 throw error;
