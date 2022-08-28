@@ -1,3 +1,9 @@
+# enstars/googlesheet-actions
+
+Github action for purposes of automating data from google sheets -> JSON files in our data repos. Not gonna be properly maintaining it for public use but feel free to PR or open an issue if you have any suggestions/ideas. Forked/written by @kamishirorui
+
+---
+
 # googlesheet-actions
 
 Github action for google spreadsheets to fetch data.
