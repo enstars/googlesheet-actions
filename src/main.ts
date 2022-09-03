@@ -20,10 +20,11 @@ async function main(): Promise<void> {
     data
       .filter((s: any) => s.name.startsWith(repo))
       .forEach((s: any) => {
-        const sheetPath = `${process.env.home}/${s.name.replace(
+        const sheetPath = `${process.env.GITHUB_WORKSPACE}/${s.name.replace(
           `${repo}/`,
           ''
         )}`;
+        core.info(JSON.stringify(process.env, undefined, 2));
         core.info(sheetPath);
 
         writeFileSync(
