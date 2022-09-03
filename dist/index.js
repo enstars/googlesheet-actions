@@ -1253,13 +1253,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __webpack_require__(747);
 const core = __importStar(__webpack_require__(470));
 const sheet_1 = __importDefault(__webpack_require__(804));
+const TEST_SHEET_ID = '1NdrCTFzbeqN-nvlLzy8YbeBbNwPnHruIe95Q1eE4Iyk';
+const TEST_REPO = 'data';
 process.on('unhandledRejection', handleError);
 main().catch(handleError);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const sheetID = core.getInput('sheet-id');
-            const repo = core.getInput('repo').split('/')[1];
+            const sheetID = core.getInput('sheet-id') || TEST_SHEET_ID;
+            const repo = core.getInput('repo').split('/')[1] || TEST_REPO;
             // const path = core.getInput('path');
             core.info(sheetID);
             const data = yield sheet_1.default(sheetID);
@@ -1267,22 +1269,24 @@ function main() {
             core.info(core.getInput('repo'));
             core.info(repo);
             // const sourcePath = process.env.GITHUB_WORKSPACE;
-            // const sourcePath = __dirname;
+            const sourcePath = __dirname;
             data
-                .filter((s) => s.name.startsWith(repo))
+                .filter((s) => s.name.split('/')[0] === repo)
                 .forEach((s) => {
-                // const sheetPath = `${sourcePath}/${s.name.replace(`${repo}/`, '')}`;
-                const sheetPath = `${s.name.replace(`${repo}/`, '')}`;
+                const sheetPath = `${sourcePath}/${s.name.replace(`${repo}/`, '')}`;
+                // const sheetPath = `${s.name.replace(`${repo}/`, '')}`;
+                const sheetDir = sheetPath
+                    .split('/')
+                    .slice(0, -1)
+                    .join('/');
                 // core.info(JSON.stringify(process.env, undefined, 2));
                 core.info(sheetPath);
-                fs_1.mkdirSync(sheetPath
-                    .split('/')
-                    .splice(-1)
-                    .join('/'), { recursive: true });
-                fs_1.writeFileSync(sheetPath.replace('.json', '-max.json'), JSON.stringify(s.data, undefined, 2));
+                core.info(sheetDir);
+                fs_1.mkdirSync(sheetDir, { recursive: true });
+                fs_1.writeFileSync(sheetPath.replace('.json', '.max.json'), JSON.stringify(s.data, undefined, 2));
                 fs_1.writeFileSync(sheetPath, JSON.stringify(s.data));
             });
-            core.setOutput('result', JSON.stringify(data, null, 2));
+            // core.setOutput('result', JSON.stringify(data, null, 2));
         }
         catch (error) {
             core.setFailed(error.message);
