@@ -1267,11 +1267,12 @@ function main() {
             core.info(core.getInput('repo'));
             core.info(repo);
             // const sourcePath = process.env.GITHUB_WORKSPACE;
-            const sourcePath = __dirname;
+            // const sourcePath = __dirname;
             data
                 .filter((s) => s.name.startsWith(repo))
                 .forEach((s) => {
-                const sheetPath = `${sourcePath}/${s.name.replace(`${repo}/`, '')}`;
+                // const sheetPath = `${sourcePath}/${s.name.replace(`${repo}/`, '')}`;
+                const sheetPath = `${s.name.replace(`${repo}/`, '')}`;
                 // core.info(JSON.stringify(process.env, undefined, 2));
                 core.info(sheetPath);
                 // writeFileSync(

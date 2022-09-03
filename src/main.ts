@@ -18,11 +18,12 @@ async function main(): Promise<void> {
     core.info(repo);
 
     // const sourcePath = process.env.GITHUB_WORKSPACE;
-    const sourcePath = __dirname;
+    // const sourcePath = __dirname;
     data
       .filter((s: any) => s.name.startsWith(repo))
       .forEach((s: any) => {
-        const sheetPath = `${sourcePath}/${s.name.replace(`${repo}/`, '')}`;
+        // const sheetPath = `${sourcePath}/${s.name.replace(`${repo}/`, '')}`;
+        const sheetPath = `${s.name.replace(`${repo}/`, '')}`;
         // core.info(JSON.stringify(process.env, undefined, 2));
         core.info(sheetPath);
 
