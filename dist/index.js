@@ -1270,9 +1270,9 @@ function main() {
                 .filter((s) => s.name.startsWith(repo))
                 .forEach((s) => {
                 const sheetPath = `${process.env.GITHUB_WORKSPACE}/${s.name.replace(`${repo}/`, '')}`;
-                core.info(JSON.stringify(process.env, undefined, 2));
+                // core.info(JSON.stringify(process.env, undefined, 2));
                 core.info(sheetPath);
-                fs_1.writeFileSync(sheetPath.replace('.json', '.max.json'), JSON.stringify(s.data, undefined, 2));
+                fs_1.writeFileSync(sheetPath.replace('.json', '-max.json'), JSON.stringify(s.data, undefined, 2));
                 fs_1.writeFileSync(sheetPath, JSON.stringify(s.data));
             });
             core.setOutput('result', JSON.stringify(data, null, 2));

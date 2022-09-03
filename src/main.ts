@@ -24,11 +24,11 @@ async function main(): Promise<void> {
           `${repo}/`,
           ''
         )}`;
-        core.info(JSON.stringify(process.env, undefined, 2));
+        // core.info(JSON.stringify(process.env, undefined, 2));
         core.info(sheetPath);
 
         writeFileSync(
-          sheetPath.replace('.json', '.max.json'),
+          sheetPath.replace('.json', '-max.json'),
           JSON.stringify(s.data, undefined, 2)
         );
         writeFileSync(sheetPath, JSON.stringify(s.data));
