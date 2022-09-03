@@ -1266,10 +1266,12 @@ function main() {
             core.info(`${data === null || data === void 0 ? void 0 : data.length} entries`);
             core.info(core.getInput('repo'));
             core.info(repo);
+            // const sourcePath = process.env.GITHUB_WORKSPACE;
+            const sourcePath = __dirname;
             data
                 .filter((s) => s.name.startsWith(repo))
                 .forEach((s) => {
-                const sheetPath = `${process.env.GITHUB_WORKSPACE}/${s.name.replace(`${repo}/`, '')}`;
+                const sheetPath = `${sourcePath}/${s.name.replace(`${repo}/`, '')}`;
                 // core.info(JSON.stringify(process.env, undefined, 2));
                 core.info(sheetPath);
                 fs_1.writeFileSync(sheetPath.replace('.json', '-max.json'), JSON.stringify(s.data, undefined, 2));
