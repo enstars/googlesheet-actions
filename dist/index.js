@@ -1268,8 +1268,8 @@ function main() {
             core.info(`${data === null || data === void 0 ? void 0 : data.length} entries`);
             core.info(core.getInput('repo'));
             core.info(repo);
-            // const sourcePath = process.env.GITHUB_WORKSPACE;
-            const sourcePath = __dirname;
+            const sourcePath = process.env.GITHUB_WORKSPACE;
+            // const sourcePath = __dirname;
             data
                 .filter((s) => s.name.split('/')[0] === repo)
                 .forEach((s) => {

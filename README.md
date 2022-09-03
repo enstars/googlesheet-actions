@@ -2,6 +2,10 @@
 
 Github action for purposes of automating data from google sheets -> JSON files in our data repos. Not gonna be properly maintaining it for public use but feel free to PR or open an issue if you have any suggestions/ideas. Forked/written by @kamishirorui
 
+## Developing
+
+Use command `npm run build-pack && npx ts-node dist/index.js` to run and test the script.
+
 ---
 
 # googlesheet-actions
