@@ -1275,10 +1275,11 @@ function main() {
                 const sheetPath = `${s.name.replace(`${repo}/`, '')}`;
                 // core.info(JSON.stringify(process.env, undefined, 2));
                 core.info(sheetPath);
-                // writeFileSync(
-                //   sheetPath.replace('.json', '-max.json'),
-                //   JSON.stringify(s.data, undefined, 2)
-                // );
+                fs_1.mkdirSync(sheetPath
+                    .split('/')
+                    .splice(-1)
+                    .join('/'), { recursive: true });
+                fs_1.writeFileSync(sheetPath.replace('.json', '-max.json'), JSON.stringify(s.data, undefined, 2));
                 fs_1.writeFileSync(sheetPath, JSON.stringify(s.data));
             });
             core.setOutput('result', JSON.stringify(data, null, 2));
