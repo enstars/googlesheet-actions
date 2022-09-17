@@ -38,9 +38,9 @@ async function main(): Promise<void> {
         mkdirSync(sheetDir, {recursive: true});
         writeFileSync(
           sheetPath.replace('.json', '.max.json'),
-          JSON.stringify(s.data, undefined, 2)
+          `${JSON.stringify(s.data, undefined, 2)}\n`
         );
-        writeFileSync(sheetPath, JSON.stringify(s.data));
+        writeFileSync(sheetPath, `${JSON.stringify(s.data)}\n`);
       });
     // core.setOutput('result', JSON.stringify(data, null, 2));
   } catch (error) {

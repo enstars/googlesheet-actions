@@ -1283,8 +1283,8 @@ function main() {
                 core.info(sheetPath);
                 core.info(sheetDir);
                 fs_1.mkdirSync(sheetDir, { recursive: true });
-                fs_1.writeFileSync(sheetPath.replace('.json', '.max.json'), JSON.stringify(s.data, undefined, 2));
-                fs_1.writeFileSync(sheetPath, JSON.stringify(s.data));
+                fs_1.writeFileSync(sheetPath.replace('.json', '.max.json'), `${JSON.stringify(s.data, undefined, 2)}\n`);
+                fs_1.writeFileSync(sheetPath, `${JSON.stringify(s.data)}\n`);
             });
             // core.setOutput('result', JSON.stringify(data, null, 2));
         }
