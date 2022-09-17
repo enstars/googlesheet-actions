@@ -4533,7 +4533,7 @@ function sheet(sheetId = '') {
                                 }
                             }
                         });
-                        return unflatten(obj);
+                        return unflatten(JSON.parse(JSON.stringify(obj)));
                     });
                     // console.log(header);
                     // console.log('res', sheetUnflattened);

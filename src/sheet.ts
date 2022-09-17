@@ -45,7 +45,7 @@ export default async function sheet<T>(sheetId = ''): Promise<T[] | []> {
             }
           });
 
-          return unflatten(obj);
+          return unflatten(JSON.parse(JSON.stringify(obj)));
         });
         // console.log(header);
         // console.log('res', sheetUnflattened);
