@@ -2,9 +2,13 @@
 import {writeFileSync, mkdirSync} from 'fs';
 import * as core from '@actions/core';
 import sheet from './sheet';
+import axios from 'axios';
 
 const TEST_SHEET_ID = '1NdrCTFzbeqN-nvlLzy8YbeBbNwPnHruIe95Q1eE4Iyk';
 const TEST_REPO = 'data';
+const SEARCH_KEY = process.env.SEARCH_KEY;
+
+const unflatten = require('flat').unflatten;
 
 process.on('unhandledRejection', handleError);
 main().catch(handleError);
@@ -41,6 +45,38 @@ async function main(): Promise<void> {
           `${JSON.stringify(s.data, undefined, 2)}\n`
         );
         writeFileSync(sheetPath, `${JSON.stringify(s.data)}\n`);
+
+        if (s.config.search) {
+          core.info(s.config.search.key);
+          const dataLocale = s.name.split('/')[1].replace('.json', '');
+          const dataType = s.name.split('/')[2].replace('.json', '');
+          const {key, params, localizedParams} = s.config.search;
+
+          const updateData = s.data
+            .map(item => {
+              const unflatItem = unflatten(item);
+              const result = {};
+              params.forEach(param => {
+                result[param] = unflatItem?.[param];
+              });
+              localizedParams.forEach(param => {
+                result[`${dataLocale}__${param}`] = unflatItem?.[param];
+              });
+              return result;
+            })
+            .filter(p => p[key]);
+          axios.put(
+            `http://puka.ensemble.moe/indexes/${dataType}/documents?primaryKey=${key}`,
+            updateData,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${core.getInput('search_key') ||
+                  SEARCH_KEY}`
+              }
+            }
+          );
+        }
       });
     // core.setOutput('result', JSON.stringify(data, null, 2));
   } catch (error) {

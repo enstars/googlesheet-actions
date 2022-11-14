@@ -17,6 +17,13 @@ export default async function sheet<T>(sheetId = ''): Promise<T[] | []> {
         )
       ).data;
       return resultsJson.sheets.map(sheet => {
+        let sheetConfig = {};
+        try {
+          sheetConfig = JSON.parse(sheet.data[0].rowData[0].values[0].note);
+        } catch (e) {
+          // console.error(e);
+        }
+        // console.log(sheet.data[0].rowData[0].values[0].note);
         const sheetName = sheet.properties.title;
         const sheetData = sheet.data[0].rowData.slice(
           sheet.properties.gridProperties.frozenRowCount - 1
@@ -49,7 +56,7 @@ export default async function sheet<T>(sheetId = ''): Promise<T[] | []> {
         });
         // console.log(header);
         // console.log('res', sheetUnflattened);
-        return {data: sheetUnflattened, name: sheetName};
+        return {data: sheetUnflattened, name: sheetName, config: sheetConfig};
       });
     } catch (error) {
       throw error;

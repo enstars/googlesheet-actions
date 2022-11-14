@@ -1253,8 +1253,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __webpack_require__(747);
 const core = __importStar(__webpack_require__(470));
 const sheet_1 = __importDefault(__webpack_require__(804));
+const axios_1 = __importDefault(__webpack_require__(53));
 const TEST_SHEET_ID = '1NdrCTFzbeqN-nvlLzy8YbeBbNwPnHruIe95Q1eE4Iyk';
 const TEST_REPO = 'data';
+const SEARCH_KEY = process.env.SEARCH_KEY;
+const unflatten = __webpack_require__(84).unflatten;
 process.on('unhandledRejection', handleError);
 main().catch(handleError);
 function main() {
@@ -1285,6 +1288,32 @@ function main() {
                 fs_1.mkdirSync(sheetDir, { recursive: true });
                 fs_1.writeFileSync(sheetPath.replace('.json', '.max.json'), `${JSON.stringify(s.data, undefined, 2)}\n`);
                 fs_1.writeFileSync(sheetPath, `${JSON.stringify(s.data)}\n`);
+                if (s.config.search) {
+                    core.info(s.config.search.key);
+                    const dataLocale = s.name.split('/')[1].replace('.json', '');
+                    const dataType = s.name.split('/')[2].replace('.json', '');
+                    const { key, params, localizedParams } = s.config.search;
+                    const updateData = s.data
+                        .map(item => {
+                        const unflatItem = unflatten(item);
+                        const result = {};
+                        params.forEach(param => {
+                            result[param] = unflatItem === null || unflatItem === void 0 ? void 0 : unflatItem[param];
+                        });
+                        localizedParams.forEach(param => {
+                            result[`${dataLocale}__${param}`] = unflatItem === null || unflatItem === void 0 ? void 0 : unflatItem[param];
+                        });
+                        return result;
+                    })
+                        .filter(p => p[key]);
+                    axios_1.default.put(`http://puka.ensemble.moe/indexes/${dataType}/documents?primaryKey=${key}`, updateData, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${core.getInput('search_key') ||
+                                SEARCH_KEY}`
+                        }
+                    });
+                }
             });
             // core.setOutput('result', JSON.stringify(data, null, 2));
         }
@@ -4508,6 +4537,14 @@ function sheet(sheetId = '') {
             try {
                 const resultsJson = yield (yield axios_1.default.get(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}?includeGridData=true&key=AIzaSyACADWLTjCH0zpxiXCOLgMJJh3CxflBac4`)).data;
                 return resultsJson.sheets.map(sheet => {
+                    let sheetConfig = {};
+                    try {
+                        sheetConfig = JSON.parse(sheet.data[0].rowData[0].values[0].note);
+                    }
+                    catch (e) {
+                        // console.error(e);
+                    }
+                    // console.log(sheet.data[0].rowData[0].values[0].note);
                     const sheetName = sheet.properties.title;
                     const sheetData = sheet.data[0].rowData.slice(sheet.properties.gridProperties.frozenRowCount - 1);
                     const header = sheetData[0].values.map(v => v === null || v === void 0 ? void 0 : v.formattedValue);
@@ -4537,7 +4574,7 @@ function sheet(sheetId = '') {
                     });
                     // console.log(header);
                     // console.log('res', sheetUnflattened);
-                    return { data: sheetUnflattened, name: sheetName };
+                    return { data: sheetUnflattened, name: sheetName, config: sheetConfig };
                 });
             }
             catch (error) {

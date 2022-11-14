@@ -32,7 +32,9 @@
     "@actions/core": "^1.2.6",
     "@actions/github": "^4.0.0",
     "axios": "^0.21.2",
-    "flat": "^5.0.2"
+    "dotenv": "^16.0.3",
+    "flat": "^5.0.2",
+    "node-fetch": "^3.3.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",
