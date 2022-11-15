@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const TEST_SHEET_ID = '1NdrCTFzbeqN-nvlLzy8YbeBbNwPnHruIe95Q1eE4Iyk';
 const TEST_REPO = 'data';
-const SEARCH_KEY = process.env.SEARCH_KEY;
+// const SEARCH_KEY = process.env.SEARCH_KEY;
 
 const unflatten = require('flat').unflatten;
 
@@ -47,7 +47,8 @@ async function main(): Promise<void> {
         writeFileSync(sheetPath, `${JSON.stringify(s.data)}\n`);
 
         if (s.config.search) {
-          core.info(s.config.search.key);
+          // core.info(s.config.search.key);
+          const dataRepo = s.name.split('/')[0].replace('.json', '');
           const dataLocale = s.name.split('/')[1].replace('.json', '');
           const dataType = s.name.split('/')[2].replace('.json', '');
           const {key, params, localizedParams} = s.config.search;
@@ -71,8 +72,41 @@ async function main(): Promise<void> {
             {
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${core.getInput('search_key') ||
-                  SEARCH_KEY}`
+                Authorization: `Bearer ${
+                  // SEARCH_KEY
+                  core.getInput('search_key')
+                }`
+              }
+            }
+          );
+          const updateDataCombined = s.data
+            .map(item => {
+              const unflatItem = unflatten(item);
+              const result = {
+                type: dataType,
+                unique_id: `${dataType}__${unflatItem?.[key]}`
+              };
+              params.forEach(param => {
+                if (param !== key) result[param] = unflatItem?.[param];
+              });
+              localizedParams.forEach(param => {
+                if (param !== key)
+                  result[`${dataRepo}__${dataLocale}__${param}`] =
+                    unflatItem?.[param];
+              });
+              return result;
+            })
+            .filter(p => p.unique_id);
+          axios.put(
+            `http://puka.ensemble.moe/indexes/all/documents?primaryKey=unique_id`,
+            updateDataCombined,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${
+                  // SEARCH_KEY
+                  core.getInput('search_key')
+                }`
               }
             }
           );
