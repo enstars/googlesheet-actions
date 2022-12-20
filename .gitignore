@@ -72,3 +72,5 @@ lib/**/*
 .vscode
 
 src/test.js
+
+undefined

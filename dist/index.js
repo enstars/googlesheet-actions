@@ -1307,7 +1307,7 @@ function main() {
                         return result;
                     })
                         .filter(p => p[key]);
-                    axios_1.default.put(`http://puka.ensemble.moe/indexes/${dataType}/documents?primaryKey=${key}`, updateData, {
+                    axios_1.default.put(`https://oceans.ensemble.moe/indexes/${dataType}/documents?primaryKey=${key}`, updateData, {
                         headers: {
                             'Content-Type': 'application/json',
                             Authorization: `Bearer ${
@@ -1333,7 +1333,7 @@ function main() {
                         return result;
                     })
                         .filter(p => p.unique_id);
-                    axios_1.default.put(`http://puka.ensemble.moe/indexes/all/documents?primaryKey=unique_id`, updateDataCombined, {
+                    axios_1.default.put(`https://oceans.ensemble.moe/indexes/all/documents?primaryKey=unique_id`, updateDataCombined, {
                         headers: {
                             'Content-Type': 'application/json',
                             Authorization: `Bearer ${
@@ -1346,7 +1346,7 @@ function main() {
             // core.setOutput('result', JSON.stringify(data, null, 2));
         }
         catch (error) {
-            core.setFailed(error.message);
+            handleError(error);
         }
     });
 }
@@ -4576,8 +4576,13 @@ function sheet(sheetId = '') {
                     const sheetName = sheet.properties.title;
                     const sheetData = sheet.data[0].rowData.slice(sheet.properties.gridProperties.frozenRowCount - 1);
                     const header = sheetData[0].values.map(v => v === null || v === void 0 ? void 0 : v.formattedValue);
-                    const sheetUnflattened = sheetData.slice(1).map(row => {
-                        const dataRow = row.values.map(v => v === null || v === void 0 ? void 0 : v.formattedValue);
+                    const sheetUnflattened = sheetData
+                        .slice(1)
+                        .map(row => {
+                        var _a;
+                        if (!(row === null || row === void 0 ? void 0 : row.values) || row.values.length === 0)
+                            return { __skipRow: true };
+                        const dataRow = (_a = row === null || row === void 0 ? void 0 : row.values) === null || _a === void 0 ? void 0 : _a.map(v => v === null || v === void 0 ? void 0 : v.formattedValue);
                         const obj = {};
                         header.forEach((h, i) => {
                             const data = dataRow[i];
@@ -4599,7 +4604,8 @@ function sheet(sheetId = '') {
                             }
                         });
                         return unflatten(JSON.parse(JSON.stringify(obj)));
-                    });
+                    })
+                        .filter(row => row.__skipRow !== true);
                     // console.log(header);
                     // console.log('res', sheetUnflattened);
                     return { data: sheetUnflattened, name: sheetName, config: sheetConfig };

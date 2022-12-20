@@ -67,7 +67,7 @@ async function main(): Promise<void> {
             })
             .filter(p => p[key]);
           axios.put(
-            `http://puka.ensemble.moe/indexes/${dataType}/documents?primaryKey=${key}`,
+            `https://oceans.ensemble.moe/indexes/${dataType}/documents?primaryKey=${key}`,
             updateData,
             {
               headers: {
@@ -98,7 +98,7 @@ async function main(): Promise<void> {
             })
             .filter(p => p.unique_id);
           axios.put(
-            `http://puka.ensemble.moe/indexes/all/documents?primaryKey=unique_id`,
+            `https://oceans.ensemble.moe/indexes/all/documents?primaryKey=unique_id`,
             updateDataCombined,
             {
               headers: {
@@ -114,7 +114,7 @@ async function main(): Promise<void> {
       });
     // core.setOutput('result', JSON.stringify(data, null, 2));
   } catch (error) {
-    core.setFailed(error.message);
+    handleError(error);
   }
 }
 

@@ -3,10 +3,6 @@ import axios from 'axios';
 
 const unflatten = require('flat').unflatten;
 
-interface StringMap {
-  [key: string]: string;
-}
-
 export default async function sheet<T>(sheetId = ''): Promise<T[] | []> {
   if (!sheetId) throw new Error('Need a Google sheet id to load');
   else
@@ -30,30 +26,35 @@ export default async function sheet<T>(sheetId = ''): Promise<T[] | []> {
         );
         const header = sheetData[0].values.map(v => v?.formattedValue);
 
-        const sheetUnflattened = sheetData.slice(1).map(row => {
-          const dataRow = row.values.map(v => v?.formattedValue);
-          const obj = {};
-          header.forEach((h, i) => {
-            const data = dataRow[i];
+        const sheetUnflattened = sheetData
+          .slice(1)
+          .map(row => {
+            if (!row?.values || row.values.length === 0)
+              return {__skipRow: true};
+            const dataRow = row?.values?.map(v => v?.formattedValue);
+            const obj = {};
+            header.forEach((h, i) => {
+              const data = dataRow[i];
 
-            // only make the field actually null if data is __null;
-            // else, just remove the field entirely to reduce json size
-            if (h !== '__skipColumn' && typeof dataRow !== 'undefined') {
-              if (data === '__null') {
-                obj[h] = null;
-              } else if (data !== 'null') {
-                try {
-                  obj[h] = JSON.parse(dataRow[i]);
-                } catch {
-                  // strings are just put in directly
-                  obj[h] = dataRow[i];
+              // only make the field actually null if data is __null;
+              // else, just remove the field entirely to reduce json size
+              if (h !== '__skipColumn' && typeof dataRow !== 'undefined') {
+                if (data === '__null') {
+                  obj[h] = null;
+                } else if (data !== 'null') {
+                  try {
+                    obj[h] = JSON.parse(dataRow[i]);
+                  } catch {
+                    // strings are just put in directly
+                    obj[h] = dataRow[i];
+                  }
                 }
               }
-            }
-          });
+            });
 
-          return unflatten(JSON.parse(JSON.stringify(obj)));
-        });
+            return unflatten(JSON.parse(JSON.stringify(obj)));
+          })
+          .filter(row => row.__skipRow !== true);
         // console.log(header);
         // console.log('res', sheetUnflattened);
         return {data: sheetUnflattened, name: sheetName, config: sheetConfig};
